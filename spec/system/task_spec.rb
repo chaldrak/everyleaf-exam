@@ -15,6 +15,13 @@ RSpec.describe 'Fonction de gestion des tâches', type: :system do
         expect(page).to have_content 'test_content'
       end
     end
+    context "Lors de la création d'une nouvelle tâche" do
+      it "La tâche est créée avec une deadline" do
+        task = FactoryBot.create(:task, name: 'task')
+        visit tasks_path
+        expect(page).to have_content '2021-10-07'
+      end
+    end
   end
   describe "Fonction d'affichage de liste" do
     context "Lors de la transition vers l'écran de liste" do
@@ -26,6 +33,15 @@ RSpec.describe 'Fonction de gestion des tâches', type: :system do
         visit tasks_path
         task_list = all('.task_row')
         expect(task_list[0]).to have_content 'sample'
+      end
+    end
+    context "Lorsque les tâches sont organisées par ordre décroissant de date de fin" do
+      it "Les tâches sont triées par date de fin" do
+        visit tasks_path
+        sleep 10
+        click_on 'Sort by deadline'
+        task_list = all('.task_row')
+        expect(task_list[0]).to have_content 'task'
       end
     end
     context "Lorsque les tâches sont organisées par ordre décroissant de priorité" do
