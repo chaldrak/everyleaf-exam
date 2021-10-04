@@ -6,4 +6,5 @@ class Task < ApplicationRecord
     scope :search_by_name, -> (name){where("name LIKE ?", "%#{name}%")}
     scope :search_by_name_and_status, -> (name, status){where("name LIKE ? AND status LIKE ?", "%#{name}%", status)}
     enum priority: [ :low, :middle, :high ]
+    belongs_to :user
 end

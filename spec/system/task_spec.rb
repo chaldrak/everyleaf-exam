@@ -38,7 +38,6 @@ RSpec.describe 'Fonction de gestion des tâches', type: :system do
     context "Lorsque les tâches sont organisées par ordre décroissant de date de fin" do
       it "Les tâches sont triées par date de fin" do
         visit tasks_path
-        sleep 10
         click_on 'Sort by deadline'
         task_list = all('.task_row')
         expect(task_list[0]).to have_content 'task'
