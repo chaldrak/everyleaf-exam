@@ -3,9 +3,9 @@ class TasksController < ApplicationController
 
   # GET /tasks or /tasks.json
   def index
-    @tasks = Task.where(user_id: current_user.id).order("created_at desc").page(params[:page]).per(3)
-    @tasks = Task.where(user_id: current_user.id).order_by_deadline.page(params[:page]).per(3) if params[:sort_expired]
-    @tasks = Task.where(user_id: current_user.id).order_by_priority.page(params[:page]).per(3) if params[:sort_priority]
+    @tasks = current_user.tasks.order("created_at desc").page(params[:page]).per(3).includes(:user)
+    @tasks = current_user.tasks.order_by_deadline.page(params[:page]).per(3) if params[:sort_expired]
+    @tasks = current_user.tasks.order_by_priority.page(params[:page]).per(3) if params[:sort_priority]
     @tasks = search_by_name_or_status(params[:task][:status], params[:task][:name]).page(params[:page]).per(3) if params[:task].present?
   end
 
@@ -72,11 +72,11 @@ class TasksController < ApplicationController
 
     def search_by_name_or_status(status, name)
       if status && name == ''
-        @tasks = Task.where(user_id: current_user.id).search_by_status(status)
+        @tasks = current_user.tasks.search_by_status(status)
       elsif name && status == ''
-        @tasks = Task.where(user_id: current_user.id).search_by_name(name.strip)
+        @tasks = current_user.tasks.search_by_name(name.strip)
       else name && status
-        @tasks = Task.where(user_id: current_user.id).search_by_name_and_status(name.strip, status)
+        @tasks = current_user.tasks.search_by_name_and_status(name.strip, status)
       end
     end
 end
