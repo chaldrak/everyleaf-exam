@@ -6,13 +6,4 @@ class User < ApplicationRecord
     has_secure_password
     validates :password, presence: true, length: {minimum: 6}
     has_many :tasks, dependent: :destroy
-    before_destroy :check_if_admin, prepend: true
-
-    private
-    def check_if_admin
-        if self.is_admin
-            throw :abort
-        end
-    end
-
 end

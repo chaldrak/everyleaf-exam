@@ -95,7 +95,11 @@ RSpec.describe 'Fonction de gestion des tâches', type: :system do
             click_on 'Log in'
             visit admin_users_path
             click_on 'Add User'
-            expect(page).to have_content 'New User'
+            fill_in 'user[name]', with: 'tom'
+            fill_in 'user[email]', with: 'tom@gmail.com'
+            fill_in 'user[password]', with: '123456'
+            click_on 'Create User'
+            expect(page).to have_content 'User was successfully created.'
         end
     end
     context "Les utilisateurs administrateurs doivent pouvoir accéder à l'écran des détails de l'utilisateur" do
@@ -127,13 +131,15 @@ RSpec.describe 'Fonction de gestion des tâches', type: :system do
     end
     context "Les utilisateurs administrateurs peuvent supprimer des utilisateurs" do
         it "L'utilisateur admin connecté peut supprimer un utilisateur" do
-            user = FactoryBot.create(:user, email: 'test_2@mail.com')
             visit new_session_path
             fill_in 'session[email]', with: 'admin@mail.com'
             fill_in 'session[password]', with: '123456'
             click_on 'Log in'
             visit admin_users_path
-            expect(page).to have_content 'delete'
+            all_btn_delete = all('.delete_list')
+            find('.test').find('a').click
+            page.driver.browser.switch_to.alert.accept
+            expect(page).not_to have_content 'test'
         end
     end
   end
