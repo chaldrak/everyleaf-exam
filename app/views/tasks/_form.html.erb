@@ -23,7 +23,7 @@
 
   <div class="field">
     <%= form.label :deadline, class:"form-label" %>
-    <%= form.date_field :deadline, class:"form-control" %>
+    <%= form.date_field :deadline, value: Time.now.strftime("%Y-%m-%d"), class:"form-control" %>
   </div>
 
   <div class="field">
@@ -35,6 +35,13 @@
     <%= form.label :priority, class:"form-label" %>
     <%= form.select :priority, Task.priorities.keys.map{ |key|[key.titleize, key] }, {}, class: "form-select" %>
   </div>
+
+  <% Tag.all.each do |tag| %>
+  <div class="field form-check-inline">
+    <%= form.check_box :tag_ids, { multiple: true, checked: tag[:checked], disabled: tag[:disabled], include_hidden: false }, tag[:id], class:"form-check-input" %>
+    <label class="form-check-label"><%= tag.name %></label>
+  </div>
+  <% end %>
 
   <div class="actions">
     <%= form.submit class:"btn btn-primary" %>
