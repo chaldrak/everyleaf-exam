@@ -6,6 +6,7 @@
     <%= form_with scope: :task, method: "get", local: true, class:"d-flex" do |form| %>
       <%= form.text_field :name, placeholder:"Name", class:"form-control me-2" %>
       <%= form.select(:status, options_for_select([['-- Select status --', ''], ['unstarted', 'unstarted'], ['in progress', 'in progress'], ['completed', 'completed']]), {}, class: "form-select me-2") %>
+      <%= form.select :tag_id, @select_tag, { wrapper: { class: 'has-warning', data: { foo: 'bar' } } }, class:"form-select" %>
       <%= form.hidden_field :search, value: "true" %>
       <%= form.button 'Search', type: "submit", class: "btn btn-outline-secondary" %>
     <% end %>
@@ -39,7 +40,11 @@
         <td><%= task.status %></td>
         <td class="priority_row"><%= task.priority %></td>
         <td><%= task.user.name %></td>
-        <td><span class="badge bg-dark me-2"><%= "tag" %></span></td>
+        <td>
+          <% task.task_tags.each do |t| %>
+          <span class="badge bg-dark me-2"><%= t.tag.name %></span><br>
+          <% end %>
+        </td>
         <td><%= link_to "show", task, class:"btn btn-outline-primary" %></td>
         <td><%= link_to "edit", edit_task_path(task), class:"btn btn-outline-success" %></td>
         <td><%= link_to "delete", task, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-outline-danger" %></td>

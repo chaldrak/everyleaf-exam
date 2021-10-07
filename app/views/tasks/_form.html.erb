@@ -38,7 +38,7 @@
 
   <% Tag.all.each do |tag| %>
   <div class="field form-check-inline">
-    <%= form.check_box :tag_ids, { multiple: true, checked: tag[:checked], disabled: tag[:disabled], include_hidden: false }, tag[:id], class:"form-check-input" %>
+    <%= form.check_box :tag_ids, { multiple: true, checked: task.tags.find_by(id: tag.id).present?, disabled: tag[:disabled], include_hidden: false }, tag[:id], class:"form-check-input" %>
     <label class="form-check-label"><%= tag.name %></label>
   </div>
   <% end %>

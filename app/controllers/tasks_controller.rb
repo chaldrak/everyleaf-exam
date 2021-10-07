@@ -3,6 +3,7 @@ class TasksController < ApplicationController
 
   # GET /tasks or /tasks.json
   def index
+    select_tag
     @tasks = current_user.tasks.order("created_at desc").page(params[:page]).per(3).includes(:user)
     @tasks = current_user.tasks.order_by_deadline.page(params[:page]).per(3) if params[:sort_expired]
     @tasks = current_user.tasks.order_by_priority.page(params[:page]).per(3) if params[:sort_priority]
@@ -16,10 +17,12 @@ class TasksController < ApplicationController
   # GET /tasks/new
   def new
     @task = Task.new
+    @tags = Tag.all
   end
 
   # GET /tasks/1/edit
   def edit
+    tag_ids = @task.tags
   end
 
   # POST /tasks or /tasks.json
@@ -67,16 +70,32 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:name, :content, :deadline, :status, :priority)
+      params.require(:task).permit(:name, :content, :deadline, :status, :priority, tag_ids: [])
     end
 
     def search_by_name_or_status(status, name)
-      if status && name == ''
+      if status && name == '' 
         @tasks = current_user.tasks.search_by_status(status)
       elsif name && status == ''
         @tasks = current_user.tasks.search_by_name(name.strip)
-      else name && status
-        @tasks = current_user.tasks.search_by_name_and_status(name.strip, status)
+      # elsif tag && status == '' && name == ''
+      #   @tasks = current_user.tasks.search_by_tag(tag).tasks
+      # elsif name && status && tag == ''
+      #   @tasks = current_user.tasks.search_by_name_and_status(name.strip, status)
+      # elsif name && tag && status == ''
+      #   @tasks = current_user.tasks.search_by_tag_and_name(name.strip, tag)
+      # elsif tag && status && name == ''
+      #   @tasks = current_user.tasks.search_by_tag_and_status(tag, status)
+      # elsif tag && status && name
+      #   @tasks = current_user.tasks.search_by_name_and_status_and_tag(name.strip, status, tag)
+      end
+    end
+
+    def select_tag
+      @select_tag = []
+      @select_tag << ["-- Select tag --", ""]
+      Tag.all.each do |tag|
+        @select_tag << [tag.name, tag.id]
       end
     end
 end
