@@ -3,11 +3,15 @@ class TasksController < ApplicationController
 
   # GET /tasks or /tasks.json
   def index
-    select_tag
+    # Task.paginate(:page => params[:page], :per_page => 3)
     @tasks = current_user.tasks.order("created_at desc").page(params[:page]).per(3).includes(:user)
     @tasks = current_user.tasks.order_by_deadline.page(params[:page]).per(3) if params[:sort_expired]
     @tasks = current_user.tasks.order_by_priority.page(params[:page]).per(3) if params[:sort_priority]
-    @tasks = search_by_name_or_status(params[:task][:status], params[:task][:name]).page(params[:page]).per(3) if params[:task].present?
+    if params[:task].present? && params[:task][:tag] == ''
+      @tasks = search_by_name_or_status(params[:task][:status], params[:task][:name]).page(params[:page]).per(3)
+    elsif 
+      @tasks = Tag.find_by(id: params[:task][:tag].to_i).tasks
+    end
   end
 
   # GET /tasks/1 or /tasks/1.json
@@ -17,12 +21,10 @@ class TasksController < ApplicationController
   # GET /tasks/new
   def new
     @task = Task.new
-    @tags = Tag.all
   end
 
   # GET /tasks/1/edit
   def edit
-    tag_ids = @task.tags
   end
 
   # POST /tasks or /tasks.json
@@ -78,24 +80,6 @@ class TasksController < ApplicationController
         @tasks = current_user.tasks.search_by_status(status)
       elsif name && status == ''
         @tasks = current_user.tasks.search_by_name(name.strip)
-      # elsif tag && status == '' && name == ''
-      #   @tasks = current_user.tasks.search_by_tag(tag).tasks
-      # elsif name && status && tag == ''
-      #   @tasks = current_user.tasks.search_by_name_and_status(name.strip, status)
-      # elsif name && tag && status == ''
-      #   @tasks = current_user.tasks.search_by_tag_and_name(name.strip, tag)
-      # elsif tag && status && name == ''
-      #   @tasks = current_user.tasks.search_by_tag_and_status(tag, status)
-      # elsif tag && status && name
-      #   @tasks = current_user.tasks.search_by_name_and_status_and_tag(name.strip, status, tag)
-      end
-    end
-
-    def select_tag
-      @select_tag = []
-      @select_tag << ["-- Select tag --", ""]
-      Tag.all.each do |tag|
-        @select_tag << [tag.name, tag.id]
       end
     end
 end

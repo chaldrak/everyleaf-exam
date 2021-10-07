@@ -6,7 +6,7 @@
     <%= form_with scope: :task, method: "get", local: true, class:"d-flex" do |form| %>
       <%= form.text_field :name, placeholder:"Name", class:"form-control me-2" %>
       <%= form.select(:status, options_for_select([['-- Select status --', ''], ['unstarted', 'unstarted'], ['in progress', 'in progress'], ['completed', 'completed']]), {}, class: "form-select me-2") %>
-      <%= form.select :tag_id, @select_tag, { wrapper: { class: 'has-warning', data: { foo: 'bar' } } }, class:"form-select" %>
+      <%= form.select(:tag, options_for_select(Tag.all.collect { |c| [c.name, c.id] }), { prompt: '-- Select tag --' }, class:"form-select me-2") %>
       <%= form.hidden_field :search, value: "true" %>
       <%= form.button 'Search', type: "submit", class: "btn btn-outline-secondary" %>
     <% end %>
@@ -52,7 +52,8 @@
     <% end %>
   </tbody>
 </table>
-<%= paginate @tasks %>
+ 
+
 <br>
 
 <%= link_to 'New Task', new_task_path, class:'btn btn-success' %>
