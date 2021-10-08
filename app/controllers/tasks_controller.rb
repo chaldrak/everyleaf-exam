@@ -9,7 +9,7 @@ class TasksController < ApplicationController
     @tasks = current_user.tasks.order_by_priority.page(params[:page]).per(3) if params[:sort_priority]
     if params[:task].present? && params[:task][:tag] == ''
       @tasks = search_by_name_or_status(params[:task][:status], params[:task][:name]).page(params[:page]).per(3)
-    elsif 
+    elsif params[:task].present? && params[:task][:tag] != ''
       @tasks = Tag.find_by(id: params[:task][:tag].to_i).tasks
     end
   end
