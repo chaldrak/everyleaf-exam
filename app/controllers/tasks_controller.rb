@@ -4,11 +4,11 @@ class TasksController < ApplicationController
   # GET /tasks or /tasks.json
   def index
     # Task.paginate(:page => params[:page], :per_page => 3)
-    @tasks = current_user.tasks.order("created_at desc").page(params[:page]).per(3).includes(:user)
-    @tasks = current_user.tasks.order_by_deadline.page(params[:page]).per(3) if params[:sort_expired]
-    @tasks = current_user.tasks.order_by_priority.page(params[:page]).per(3) if params[:sort_priority]
+    @tasks = current_user.tasks.order("created_at desc").page(params[:page]).includes(:user)
+    @tasks = current_user.tasks.order_by_deadline.page(params[:page]) if params[:sort_expired]
+    @tasks = current_user.tasks.order_by_priority.page(params[:page]) if params[:sort_priority]
     if params[:task].present? && params[:task][:tag] == ''
-      @tasks = search_by_name_or_status(params[:task][:status], params[:task][:name]).page(params[:page]).per(3)
+      @tasks = search_by_name_or_status(params[:task][:status], params[:task][:name]).page(params[:page])
     elsif params[:task].present? && params[:task][:tag] != ''
       @tasks = Tag.find_by(id: params[:task][:tag].to_i).tasks
     end
